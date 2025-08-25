@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+<head>
+    <title>VMC Brick Locator</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            background: #003366;
+            color: white;
+            padding: 1em 2em;
+        }
+
+        header img {
+            height: 60px;
+            margin-right: 1em;
+        }
+
+        header h1 {
+            font-size: 1.8em;
+            margin: 0;
+        }
+
+        main {
+            padding: 2em;
+            display: flex;
+            justify-content: space-between;
+            gap: 2em;
+        }
+
+        .search-panel {
+            flex: 1;
+        }
+
+        form {
+            display: flex;
+            gap: 1em;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.3em;
+            font-weight: bold;
+        }
+
+        input[type="text"], select {
+            padding: 0.5em;
+            font-size: 1em;
+            width: 250px;
+        }
+
+        button {
+            padding: 0.6em 1.2em;
+            font-size: 1em;
+            background: #005ea2;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        table {
+            margin-top: 2em;
+            border-collapse: collapse;
+            width: 100%;
+            background: white;
+        }
+
+        th, td {
+            padding: 0.6em;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        .image-panel {
+            flex-shrink: 0;
+            width: 600px;
+        }
+
+        .image-panel img {
+            max-width: 100%;
+            border: 2px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='logo.jpg') }}" alt="VMC Logo">
+        <h1>Veterans Memorial Center Brick Locator</h1>
+    </header>
+
+    <main>
+        <!-- Left: Search Panel -->
+        <div class="search-panel">
+            <form method="POST">
+                <div>
+                    <label for="name_query">Search by First or Last Name</label>
+                    <input type="text" name="name_query" id="name_query" value="{{ name_query }}">
+                </div>
+
+                <div>
+                    <label for="section">Search by Location</label>
+                    <select name="section" id="section">
+                        <option value="">-- All Sections --</option>
+                        {% for section in sections %}
+                            <option value="{{ section }}" {% if section == selected_section %}selected{% endif %}>{{ section }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <button type="submit">Search</button>
+                </div>
+            </form>
+
+            {% if results %}
+                <h2>Results ({{ results|length }}):</h2>
+                <table>
+                    <tr>
+                        <th>Name</th>
+                        <th>Section</th>
+                        <th>Location</th>
+                    </tr>
+                    {% for row in results %}
+                    <tr>
+                        <td>{{ row['BRICK NAME'] }}</td>
+                        <td>{{ row['MEMORIAL PLAZA SECTION'] }}</td>
+                        <td>{{ row['LOCATION'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% elif name_query or selected_section %}
+                <p>No matching results found.</p>
+            {% endif %}
+        </div>
+
+        <!-- Right: Static Image Panel -->
+        <div class="image-panel">
+            <img src="{{ url_for('static', filename='plaza_map.jpg') }}" alt="Plaza Map">
+        </div>
+    </main>
+</body>
+</html>
