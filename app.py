@@ -11,27 +11,38 @@ sections = sorted(df['MEMORIAL PLAZA SECTION'].dropna().unique())
 def search():
     results = []
     name_query = ""
-    loc_query = ""
     selected_section = ""
 
     if request.method == 'POST':
-        name_query = request.form.get('name_query', '').strip()
-        selected_section = request.form.get('section', '')
+        action = request.form.get('action')
 
-        filtered = df
+        if action == 'search':
+            name_query = request.form.get('name_query', '').strip()
+            selected_section = request.form.get('section', '')
 
-        # Apply filters if provided
-        if name_query:
-            filtered = filtered[filtered['BRICK NAME'].str.contains(name_query, case=False, na=False)]
+            filtered = df
 
-        if selected_section:
-            filtered = filtered[filtered['MEMORIAL PLAZA SECTION'].str.strip() == selected_section.strip()]
+            if name_query:
+                filtered = filtered[filtered['BRICK NAME'].str.contains(name_query, case=False, na=False)]
 
-        # Format results
-        results = filtered[['BRICK NAME', 'MEMORIAL PLAZA SECTION', 'LOCATION']].to_dict(orient='records')
+            if selected_section:
+                filtered = filtered[filtered['MEMORIAL PLAZA SECTION'].str.strip() == selected_section.strip()]
 
-    return render_template('search.html', results=results, sections=sections,
-                           name_query=name_query, loc_query=loc_query, selected_section=selected_section)
+            results = filtered[['BRICK NAME', 'MEMORIAL PLAZA SECTION', 'LOCATION']].to_dict(orient='records')
+
+        elif action == 'clear':
+            # leave everything empty
+            results = []
+            name_query = ""
+            selected_section = ""
+
+    return render_template(
+        'search.html',
+        results=results,
+        sections=sections,
+        name_query=name_query,
+        selected_section=selected_section
+    )
 
 if __name__ == '__main__':
     app.run(debug=True)

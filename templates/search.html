@@ -29,9 +29,11 @@
         }
 
         main {
+            padding: 2em;
             display: flex;
-            justify-content: flex-start; /* keeps things aligned left */
-            gap: 4em; /* spacing between the two panels */
+            justify-content: center;   /* centers the two panels together */
+            align-items: flex-start;
+            gap: 4em;                  /* controls spacing between table + image */
         }
 
         .search-panel {
@@ -116,8 +118,10 @@
                 </div>
 
                 <div>
-                    <button type="submit">Search</button>
+                    <button type="submit" name="action" value="search">Search</button>
+                    <button type="submit" name="action" value="clear">Clear</button>
                 </div>
+
             </form>
 
             {% if results %}
